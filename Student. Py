@@ -1,0 +1,46 @@
+import sqlite3
+
+# Database connect
+conn = sqlite3.connect("students.db")
+cursor = conn.cursor()
+
+# Table create
+cursor.execute("CREATE TABLE IF NOT EXISTS students (rollno INT, name TEXT, marks FLOAT)")
+
+def add_student():
+    roll = int(input("Enter Roll No: "))
+    name = input("Enter Name: ")
+    marks = float(input("Enter Marks: "))
+    cursor.execute("INSERT INTO students VALUES (?,?,?)", (roll, name, marks))
+    conn.commit()
+    print("Student Added Successfully!")
+
+def show_all():
+    cursor.execute("SELECT * FROM students")
+    rows = cursor.fetchall()
+    if rows:
+        for row in rows:
+            print("Roll:", row[0], "Name:", row[1], "Marks:", row[2])
+    else:
+        print("No students found")
+
+def search_student():
+    roll = int(input("Enter Roll No to search: "))
+    cursor.execute("SELECT * FROM students WHERE rollno=?", (roll,))
+    row = cursor.fetchone()
+    if row:
+        print("Roll:", row[0], "Name:", row[1], "Marks:", row[2])
+    else:
+        print("Student not found")
+
+# Menu
+while True:
+    print("\n1. Add Student 2. Show All 3. Search 4. Exit")
+    choice = int(input("Enter choice: "))
+    if choice == 1: add_student()
+    elif choice == 2: show_all()
+    elif choice == 3: search_student()
+    elif choice == 4: break
+    else: print("Invalid choice")
+
+conn.close()
